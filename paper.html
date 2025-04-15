@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Paper Blast Animation</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: chartreuse;
+
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <script>
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confetti = [];
+
+    for (let i = 0; i < 300; i++) {
+      confetti.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        r: Math.random() * 6 + 2,
+        d: Math.random() * 100 + 10,
+        color:' hsl(${Math.random() * 360}, 100%, 50%)',
+        tilt: Math.random() * 10 - 10,
+        tiltAngle: 0,
+        speedX: Math.random() * 8 - 4,
+        speedY: Math.random() * 8 - 4,
+      });
+    }
+
+    function drawText() {
+      ctx.font = "48px Arial";
+      ctx.fillstyle = "white";
+      ctx.textAlign = "center";
+      ctx.fillText("CONGRATUALATIONS!", canvas.width / 2, 200);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw text
+      drawText();
+
+      // Draw confetti
+      confetti.forEach((c) => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
+        ctx.stroke();
+
+        c.x += c.speedX;
+        c.y += c.speedY;
+        c.tiltAngle += 0.1;
+        c.tilt = Math.sin(c.tiltAngle) * 15;
+
+        // Respawn if out of bounds
+        if (c.y > canvas.height || c.x < 0 || c.x > canvas.width) {
+          c.x = canvas.width / 2;
+          c.y = canvas.height / 2;
+          c.speedX = Math.random() * 8 - 4;
+          c.speedY = Math.random() * 8 - 4;
+        }
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
